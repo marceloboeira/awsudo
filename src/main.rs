@@ -56,10 +56,6 @@ fn main() {
     let profile_name = matches.value_of("user").unwrap_or("default");
     let command = matches.value_of("command").unwrap_or("--");
 
-    println!("config-file: {:?}", config_file_path);
-    println!("profile: {:?}", profile_name);
-    println!("command: {:?}", command);
-
     let conf = match Ini::load_from_file(config_file_path) {
         Err(message) => panic!(message),
         Ok(value) => value
@@ -68,7 +64,7 @@ fn main() {
     let section = conf.section(Some(profile_name)).unwrap();
     let role_arn = section.get("role_arn").unwrap();
     let mfa_serial = section.get("mfa_serial").unwrap();
-    // parse region or default
+    //TODO parse region or default
 
     println!("role_arn: {:?}", role_arn);
     println!("mfa_serial: {:?}", mfa_serial);
@@ -86,7 +82,8 @@ fn main() {
 
     let sts = StsClient::new(Region::EuCentral1);
 
-    //load thiings from Profile
+    //TODO use the default
+    let sts = StsClient::new(Region::EuCentral1);
     match sts.assume_role(AssumeRoleRequest{
             role_arn: role_arn.to_string(),
             role_session_name: AWS_DEFAULT_SESSION_NAME.to_owned(),
