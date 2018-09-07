@@ -69,18 +69,19 @@ fn main() {
     println!("role_arn: {:?}", role_arn);
     println!("mfa_serial: {:?}", mfa_serial);
 
-    // Get the MFA token if necessary
-    println!("Please type your MFA token for {:}: ", mfa_serial);
+    //TODO Get the MFA token only if necessary
     let mut token = String::new();
-    match io::stdin().read_line(&mut token) {
-        Ok(_) => {
-            token.pop(); //REMOVES THE \n
-            println!("token: {}", token);
+    if !mfa_serial.is_empty() {
+        println!("Please type your MFA token for {:}: ", mfa_serial);
+        match io::stdin().read_line(&mut token) {
+            Ok(_) => {
+                token.pop(); //REMOVES THE \n
+                println!("token: {}", token);
+            }
+            Err(error) => println!("error: {}", error),
         }
-        Err(error) => println!("error: {}", error),
     }
 
-    let sts = StsClient::new(Region::EuCentral1);
 
     //TODO use the default
     let sts = StsClient::new(Region::EuCentral1);
