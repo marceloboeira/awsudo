@@ -23,6 +23,8 @@ fn inject_environment_with(credentials: Credentials) {
 }
 
 fn main() {
+    // CLI
+    //TODO Extract this to its own module/file/package...
     let matches = App::new("awsudo - sudo-like behavior for role assumed access on AWS accounts")
                           .version("0.1")
                           .arg(Arg::with_name("config")
@@ -56,6 +58,9 @@ fn main() {
     let profile_name = matches.value_of("user").unwrap_or("default");
     let command = matches.value_of("command").unwrap_or("--");
 
+    // END CLI
+
+    //  State manager
     let conf = match Ini::load_from_file(config_file_path) {
         Err(message) => panic!(message),
         Ok(value) => value
@@ -66,9 +71,12 @@ fn main() {
     let mfa_serial = section.get("mfa_serial").unwrap();
     //TODO parse region or default
 
+    //TODO use a debug flag for those
     println!("role_arn: {:?}", role_arn);
     println!("mfa_serial: {:?}", mfa_serial);
+    // END State Manager
 
+    //TODO Figure where to put this token request interaction...
     //TODO Get the MFA token only if necessary
     let mut token = String::new();
     if !mfa_serial.is_empty() {
@@ -82,7 +90,8 @@ fn main() {
         }
     }
 
-
+    // Token Generator
+    //TODO Extract this to its own module/file/package...
     //TODO use the default
     let sts = StsClient::new(Region::EuCentral1);
     match sts.assume_role(AssumeRoleRequest{
@@ -94,7 +103,14 @@ fn main() {
         Err(e) => panic!("{:?}", e),
         Ok(response) => inject_environment_with(response.credentials.unwrap())
     };
+    // END Token Generator
 
+    // TODO: Persist token with State Manager
+    //
+    // TODO: Where to put the environment stuff? StateManager?
+
+    // Command runner
+    //TODO Extract this to its own module/file/package...
     Command::new("sh")
         .arg("-c")
         .arg(command)
