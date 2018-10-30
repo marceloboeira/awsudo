@@ -53,6 +53,5 @@ awsudo -u production 'aws s3 ls'
 For now, we have some limitations:
 1. The command needs to be quoted
 1. A new session/token is created everytime
-1. Only works with MFA (afaik)
 
 Probably tackling them soon, since it doesn't make sense for me to replace the current one without those
