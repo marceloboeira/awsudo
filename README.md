@@ -7,6 +7,20 @@ A rewrite of the core behavior of [makethunder/awsudo](https://github.com/maketh
 
 See the [motivation](#motivation) for more info.
 
+## Motivation
+
+Main motivation was to write something that I would use everyday with rust.
+
+The [original awsudo](https://github.com/makethunder/awsudo/) is heavily used where I work and it constantly causes pain, the CLI has a couple of issues:
+1. **Distribution** - It was written in Python, which makes it difficult to distribute, also doens't have a homebrew formula
+1. **Dependencies** - It [locks the aws-cli version](https://github.com/makethunder/awsudo/issues/7), and [depends on code of the CLI itsel](https://github.com/makethunder/awsudo/blob/d5800bc4a9785d179c678605d0ae5bf4e28f5205/awsudo/config.py#L1)
+1. **Versioning** - It [doesn't have versions whatsoever](https://github.com/makethunder/awsudo/releases)
+1. **Bugs** - It has a couple of bugs, e.g.: [you can't pass `AWS_*` like variables to your command](https://github.com/makethunder/awsudo/issues/14)
+
+The [official solution](https://docs.aws.amazon.com/cli/latest/userguide/cli-roles.html#cli-roles-cache) from AWS is not really great either:
+1. Stateful - Once you assume you stick with it until it expires or you switch
+1. CLI centric - Hard to share the credentials and switch quickly if you are not using their CLI
+
 ## Usage
 
 ```
@@ -34,23 +48,11 @@ For example, to get all of the S3 buckets of the **production** account:
 awsudo -u production 'aws s3 ls'
 ```
 
+### Limitations
+
 For now, we have some limitations:
 1. The command needs to be quoted
 1. A new session/token is created everytime
 1. Only works with MFA (afaik)
 
 Probably tackling them soon, since it doesn't make sense for me to replace the current one without those
-
-## Motivation
-
-Main motivation was to write something that I would use everyday with rust.
-
-The [original awsudo](https://github.com/makethunder/awsudo/) is heavily used where I work and it constantly causes pain, the CLI has a couple of issues:
-1. **Distribution** - It was written in Python, which makes it difficult to distribute, also doens't have a homebrew formula
-1. **Dependencies** - It [locks the aws-cli version](https://github.com/makethunder/awsudo/issues/7), and [depends on code of the CLI itsel](https://github.com/makethunder/awsudo/blob/d5800bc4a9785d179c678605d0ae5bf4e28f5205/awsudo/config.py#L1)
-1. **Versioning** - It [doesn't have versions whatsoever](https://github.com/makethunder/awsudo/releases)
-1. **Bugs** - It has a couple of bugs, e.g.: [you can't pass `AWS_*` like variables to your command](https://github.com/makethunder/awsudo/issues/14)
-
-The [official solution](https://docs.aws.amazon.com/cli/latest/userguide/cli-roles.html#cli-roles-cache) from AWS is not really great either:
-1. Stateful - Once you assume you stick with it until it expires or you switch
-1. CLI centric - Hard to share the credentials and switch quickly if you are not using their CLI
