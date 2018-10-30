@@ -13,7 +13,7 @@ Main motivation was to write something that I would use everyday with rust.
 
 The [original awsudo](https://github.com/makethunder/awsudo/) is heavily used where I work and it constantly causes pain, the CLI has a couple of issues:
 1. **Distribution** - It was written in Python, which makes it difficult to distribute, also doens't have a homebrew formula
-1. **Dependencies** - It [locks the aws-cli version](https://github.com/makethunder/awsudo/issues/7), and [depends on code of the CLI itsel](https://github.com/makethunder/awsudo/blob/d5800bc4a9785d179c678605d0ae5bf4e28f5205/awsudo/config.py#L1)
+1. **Dependencies** - It [locks the aws-cli version](https://github.com/makethunder/awsudo/issues/7), and [depends on code of the CLI itself](https://github.com/makethunder/awsudo/blob/d5800bc4a9785d179c678605d0ae5bf4e28f5205/awsudo/config.py#L1)
 1. **Versioning** - It [doesn't have versions whatsoever](https://github.com/makethunder/awsudo/releases)
 1. **Bugs** - It has a couple of bugs, e.g.: [you can't pass `AWS_*` like variables to your command](https://github.com/makethunder/awsudo/issues/14)
 
@@ -54,4 +54,4 @@ For now, we have some limitations:
 1. The command needs to be quoted
 1. A new session/token is created everytime
 
-Probably tackling them soon, since it doesn't make sense for me to replace the current one without those
+Probably tackling them soon, since it doesn't make sense for me to replace the current one without those.
