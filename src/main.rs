@@ -99,11 +99,6 @@ fn main() {
         env::set_var("AWS_SECRET_ACCESS_KEY", file_aws_secret_access_key);
         env::set_var("AWS_SESSION_TOKEN", file_aws_session_token);
     } else {
-        //TODO use a debug flag for those
-        println!("role_arn: {:?}", role_arn);
-        println!("mfa_serial: {:?}", mfa_serial);
-        // END State Manager
-
         //TODO Figure where to put this token request interaction...
         //TODO Get the MFA token only if necessary
         let mut token = String::new();
@@ -112,7 +107,6 @@ fn main() {
             match io::stdin().read_line(&mut token) {
                 Ok(_) => {
                     token.pop(); //REMOVES THE \n
-                    println!("token: {}", token);
                 }
                 Err(error) => println!("error: {}", error),
             }
