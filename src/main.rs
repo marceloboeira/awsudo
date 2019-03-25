@@ -11,7 +11,7 @@ use std::io;
 use std::process::{Command, Stdio};
 
 use ini::Ini;
-use clap::{Arg, App};
+use clap::{Arg, App, AppSettings};
 use rusoto_sts::{Sts, StsClient, AssumeRoleRequest};
 use rusoto_core::{Region};
 use chrono::prelude::*;
@@ -24,6 +24,7 @@ fn main() {
     //TODO Extract this to its own module/file/package...
     let matches = App::new("awsudo - sudo-like behavior for role assumed access on AWS accounts")
                           .version("0.1")
+                          .setting(AppSettings::AllowExternalSubcommands)
                           .arg(Arg::with_name("config")
                                .short("c")
                                .long("config")
@@ -34,10 +35,6 @@ fn main() {
                                .short("u")
                                .long("user")
                                .help("Set the AWS profile name based on the config file")
-                               .required(true)
-                               .takes_value(true))
-                          .arg(Arg::with_name("command")
-                               .help("The command to run with the assumed role")
                                .required(true)
                                .takes_value(true)).get_matches();
 
@@ -53,7 +50,21 @@ fn main() {
     };
 
     let profile_name = matches.value_of("user").unwrap_or("default");
-    let command = matches.value_of("command").unwrap_or("--");
+    let command = match matches.subcommand() {
+        (external, maybe_matches) => {
+            let args = match maybe_matches {
+                Some(external_matches) =>  {
+                    match external_matches.values_of("") {
+                        Some(values) => values.collect::<Vec<&str>>().join(" "),
+                        None => String::from("")
+                    }
+                },
+                _ => String::from(" ")
+            };
+
+            vec![String::from(external), args].join(" ")
+        },
+    };
 
     // END CLI
 

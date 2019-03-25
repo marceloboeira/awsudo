@@ -48,17 +48,12 @@ For example, to get all of the S3 buckets of the **production** account:
 awsudo -u production 'aws s3 ls'
 ```
 
-### Status of the Project
-
-For now, we have some limitations:
-1. The command needs to be quoted (https://github.com/clap-rs/clap/issues/1344).
-1. A new session/token is created everytime (Preparing the cache).
-
-Probably tackling them soon, since it doesn't make sense for me to replace the current one without those.
-
 ## Workflow
 
-This is how the CLI works under the hood, for transparency and organization purposes:
+This is how the CLI works under the hood, for transparency and organization purposes.
+
+**Notice** some features of the workflow are a work in progress.
+
 (click to see the large version)
 
 <img src="docs/workflow.png" width="10%">
