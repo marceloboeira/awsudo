@@ -3,6 +3,7 @@ extern crate ini;
 extern crate rusoto_core;
 extern crate rusoto_sts;
 extern crate chrono;
+extern crate dirs;
 
 use std::env;
 use std::path::Path;
@@ -40,7 +41,7 @@ fn main() {
                                .required(true)
                                .takes_value(true)).get_matches();
 
-    let mut default_config_file_path = match env::home_dir() {
+    let mut default_config_file_path = match dirs::home_dir() {
         Some(path) => path,
         None => panic!("Something wrong with your home dir")
     };
