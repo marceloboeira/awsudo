@@ -1,0 +1,34 @@
+graph TD
+  error[Error]
+  check_token[Check Token Cache File]
+  generate_token[Generate New Token]
+  request_new_token[Request New Token]
+  collect_mfa_pin[Collect MFA PIN]
+  update_token_cache[Update Token Cache File]
+  inject_env[Inject Environment Variables]
+  run_command[Run given command]
+  main[awsudo] --> cli_parser(Parse Arguments)
+  cli_parser --> user_validation{User flag present?}
+  user_validation -->|No| error
+  user_validation -->|Yes| check_token
+  check_token --> token_file_validation{Is the token file present?}
+  token_file_validation -->|No| generate_token
+  token_file_validation -->|Yes| token_file_user_validation{Is there a token for the given user?}
+  token_file_user_validation -->|No| generate_token
+  token_file_user_validation -->|Yes| token_file_timestamp_validation{Is the token timestamp still valid?}
+  token_file_timestamp_validation -->|Yes| generate_token
+  token_file_timestamp_validation -->|Yes| inject_env
+  inject_env --> run_command
+  generate_token --> aws_file_present{Is AWS config file present?}
+  aws_file_present -->|No| error
+  aws_file_present -->|Yes| aws_file_user{Is the given user present on AWS file?}
+  aws_file_user -->|Yes| aws_file_user_properties{Are all the required properties set?}
+  aws_file_user_properties --> |No| error
+  aws_file_user_properties --> |Yes| aws_file_user_mfa{Is there an MFA set?}
+  aws_file_user_mfa -->|No| request_new_token
+  aws_file_user_mfa -->|Yes| collect_mfa_pin
+  collect_mfa_pin --> request_new_token
+  request_new_token --> request_new_token_response{Was the response successful?}
+  request_new_token_response -->|No| error
+  request_new_token_response -->|Yes| update_token_cache
+  update_token_cache --> inject_env

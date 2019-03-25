@@ -55,3 +55,9 @@ For now, we have some limitations:
 1. A new session/token is created everytime
 
 Probably tackling them soon, since it doesn't make sense for me to replace the current one without those.
+
+## Workflow
+
+This is how the CLI works under the hood, for transparency and organization purposes:
+
+![awsudo workflow](docs/workflow.png)

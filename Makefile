@@ -1,8 +1,11 @@
-CARGO_BIN = `which cargo`
-TARGET_PATH = `pwd`/target/debug
-BIN_NAME = awsudo
-BIN_PATH = $(TARGET_PATH)/$(BIN_NAME)
+CARGO_BIN ?= `which cargo`
+TARGET_PATH ?= `pwd`/target/debug
+BIN_NAME ?= awsudo
+BIN_PATH ?= $(TARGET_PATH)/$(BIN_NAME)
 INSTALLED_BIN_PATH = /usr/local/bin/$(BIN_NAME)
+NPM ?= `which npm`
+MERMAID ?= `which mmdc`
+DOCS_PATH ?= `pwd`/docs
 
 .PHONY: build
 build:
@@ -19,3 +22,11 @@ install: build
 .PHONY: test
 test:
 	$(CARGO_BIN) test
+
+.PHONY: setup_docs
+setup_docs:
+	$(NPM) install -g mermaid.cli
+
+.PHONY: docs
+docs:
+	$(MERMAID) -i $(DOCS_PATH)/workflow.mmd -o $(DOCS_PATH)/workflow.png -t neutral
