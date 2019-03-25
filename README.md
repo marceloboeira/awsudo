@@ -59,5 +59,6 @@ Probably tackling them soon, since it doesn't make sense for me to replace the c
 ## Workflow
 
 This is how the CLI works under the hood, for transparency and organization purposes:
+(click to see the large version).
 
-![awsudo workflow](docs/workflow.png)
+<img src="docs/workflow.png" width="10%">
