@@ -16,7 +16,7 @@ use rusoto_sts::{Sts, StsClient, AssumeRoleRequest};
 use rusoto_core::{Region};
 use chrono::prelude::*;
 
-const AWS_DEFAULT_CONFIG_PATH: &str = ".aws/credentials";
+const AWS_DEFAULT_CONFIG_PATH: &str = ".aws/config";
 const AWS_DEFAULT_SESSION_NAME: &str = "awsudo";
 
 fn main() {
