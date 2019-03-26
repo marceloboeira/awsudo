@@ -24,10 +24,10 @@ The [official solution](https://docs.aws.amazon.com/cli/latest/userguide/cli-rol
 ## Usage
 
 ```
-awsudo - sudo-like behavior for AWS accounts
+awsudo - sudo-like behavior for role assumed access on AWS accounts
 
 USAGE:
-    awsudo [OPTIONS] <command> --user <user>
+    awsudo [OPTIONS] --user <user> [SUBCOMMAND]
 
 FLAGS:
     -h, --help       Prints help information
@@ -36,16 +36,36 @@ FLAGS:
 OPTIONS:
     -c, --config <FILE>    Sets a custom config file other than ~/.aws/credentials
     -u, --user <user>      Set the AWS profile name based on the config file
-
-ARGS:
-    <command>    The command to run with the assumed role
 ```
 
 Thanks [clap](https://github.com/clap-rs/clap) for that.
 
 For example, to get all of the S3 buckets of the **production** account:
+
+```shell
+awsudo -u production aws s3 ls
 ```
-awsudo -u production 'aws s3 ls'
+
+Runnin a executable that needs AWS credentials:
+
+```shell
+awsudo -u staging delete_s3_buckets "s3://staging-acc/foo"
+```
+
+#### Aliases
+
+This is not required, but interesting:
+
+```shell
+alias awss='awsudo -u staging'
+alias awso='awsudo -u operations'
+alias awsp='awsudo -u production'
+```
+
+Then after:
+
+```shell
+awss [subcomand]
 ```
 
 ## Workflow
