@@ -25,7 +25,7 @@ pub fn inject(key: &str, secret: &str, token: &str) {
 
 #[cfg(test)]
 mod tests {
-    use aws::environment::inject;
+    use awsudo::environment::inject;
     use std::env;
 
     #[test]

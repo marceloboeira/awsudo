@@ -1,4 +1,5 @@
-mod aws;
+mod awsudo;
+
 extern crate chrono;
 extern crate clap;
 extern crate dirs;
@@ -107,7 +108,7 @@ fn main() {
     };
 
     if file_aws_access_key_id != "invalid" && now <= session_expires_at {
-        aws::environment::inject(
+        awsudo::environment::inject(
             file_aws_access_key_id,
             file_aws_secret_access_key,
             file_aws_session_token,
@@ -173,7 +174,7 @@ fn main() {
 
                 another.write_to_file(config_file_path.clone()).unwrap();
 
-                aws::environment::inject(
+                awsudo::environment::inject(
                     credentials.access_key_id.as_str(),
                     credentials.secret_access_key.as_str(),
                     credentials.session_token.as_str(),
