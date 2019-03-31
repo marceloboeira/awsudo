@@ -1,20 +1,20 @@
+mod aws;
+extern crate chrono;
 extern crate clap;
+extern crate dirs;
 extern crate ini;
 extern crate rusoto_core;
 extern crate rusoto_sts;
-extern crate chrono;
-extern crate dirs;
 
-use std::env;
-use std::path::Path;
 use std::io;
+use std::path::Path;
 use std::process::{Command, Stdio};
 
-use ini::Ini;
-use clap::{Arg, App, AppSettings};
-use rusoto_sts::{Sts, StsClient, AssumeRoleRequest};
-use rusoto_core::{Region};
 use chrono::prelude::*;
+use clap::{App, AppSettings, Arg};
+use ini::Ini;
+use rusoto_core::Region;
+use rusoto_sts::{AssumeRoleRequest, Sts, StsClient};
 
 const AWS_DEFAULT_CONFIG_PATH: &str = ".aws/config";
 const AWS_DEFAULT_SESSION_NAME: &str = "awsudo";
@@ -107,9 +107,11 @@ fn main() {
     println!("mfa_serial: {:?}", mfa_serial);
 
     if file_aws_access_key_id != "invalid" && now <= session_expires_at {
-        env::set_var("AWS_ACCESS_KEY_ID", file_aws_access_key_id);
-        env::set_var("AWS_SECRET_ACCESS_KEY", file_aws_secret_access_key);
-        env::set_var("AWS_SESSION_TOKEN", file_aws_session_token);
+        aws::environment::inject(
+            file_aws_access_key_id,
+            file_aws_secret_access_key,
+            file_aws_session_token,
+        )
     } else {
         //TODO Figure where to put this token request interaction...
         //TODO Get the MFA token only if necessary
@@ -150,11 +152,12 @@ fn main() {
 
                 another.write_to_file(config_file_path.clone()).unwrap();
 
-                env::set_var("AWS_ACCESS_KEY_ID", credentials.access_key_id);
-                env::set_var("AWS_SECRET_ACCESS_KEY", credentials.secret_access_key);
-                env::set_var("AWS_SESSION_TOKEN", credentials.session_token);
+                aws::environment::inject(
+                    credentials.access_key_id.as_str(),
+                    credentials.secret_access_key.as_str(),
+                    credentials.session_token.as_str(),
+                )
             }
-
         };
     }
 
