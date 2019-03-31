@@ -9,28 +9,29 @@ DOCS_PATH ?= `pwd`/docs
 
 .PHONY: build
 build: format
-	$(CARGO_BIN) build
+	@$(CARGO_BIN) build
 
 .PHONY: format
 format:
-	$(CARGO_BIN) fmt
+	@$(CARGO_BIN) fmt
 
 .PHONY: run
 run: build
-	$(BIN_PATH)
+	@$(BIN_PATH)
 
 .PHONY: install
 install: build
-	cp $(BIN_PATH) $(INSTALLED_BIN_PATH)
+	@cp $(BIN_PATH) $(INSTALLED_BIN_PATH)
+	@echo "You can try running 'awsudo' now"
 
 .PHONY: test
 test:
-	$(CARGO_BIN) test
+	@$(CARGO_BIN) test
 
 .PHONY: setup_docs
 setup_docs:
-	$(NPM) install -g mermaid.cli
+	@$(NPM) install -g mermaid.cli
 
 .PHONY: docs
 docs:
-	$(MERMAID) -i $(DOCS_PATH)/workflow.mmd -o $(DOCS_PATH)/workflow.png -t neutral
+	@$(MERMAID) -i $(DOCS_PATH)/workflow.mmd -o $(DOCS_PATH)/workflow.png -t neutral
