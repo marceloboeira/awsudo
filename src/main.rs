@@ -79,7 +79,7 @@ fn main() {
 
     let section = conf.section(Some(profile_name)).unwrap();
     let role_arn = section.get("role_arn").unwrap();
-    let mfa_serial = section.get("mfa_serial").unwrap();
+    let mfa_serial = section.get("mfa_serial");
     //TODO parse region or default
 
     // ~~~cached token ~~
@@ -113,33 +113,41 @@ fn main() {
             file_aws_session_token,
         )
     } else {
+        let base_arr = AssumeRoleRequest {
+            role_arn: role_arn.to_string(),
+            role_session_name: AWS_DEFAULT_SESSION_NAME.to_owned(),
+            ..Default::default()
+        };
+
         //TODO Figure where to put this token request interaction...
         //TODO Get the MFA token only if necessary
-        let mut token = String::new();
-        if !mfa_serial.is_empty() {
-            println!("Please type your MFA token for {:}: ", mfa_serial);
-            match io::stdin().read_line(&mut token) {
-                Ok(_) => {
-                    token.pop(); //REMOVES THE \n
+        let arr = match mfa_serial {
+            Some(serial) => {
+                let mut token = String::new();
+                if !serial.is_empty() {
+                    println!("Please type your MFA token for {}: ", serial);
+                    match io::stdin().read_line(&mut token) {
+                        Ok(_) => {
+                            token.pop(); //REMOVES THE \n TODO: Update with Parse
+                        }
+                        Err(error) => println!("error: {}", error),
+                    }
                 }
-                Err(error) => println!("error: {}", error),
+
+                AssumeRoleRequest {
+                    serial_number: Some(serial.to_string()),
+                    token_code: Some(token.to_string()),
+                    ..base_arr
+                }
             }
-        }
+            None => base_arr,
+        };
 
         // Token Generator
         //TODO Extract this to its own module/file/package...
         //TODO use the default
         let sts = StsClient::new(Region::EuCentral1);
-        match sts
-            .assume_role(AssumeRoleRequest {
-                role_arn: role_arn.to_string(),
-                role_session_name: AWS_DEFAULT_SESSION_NAME.to_owned(),
-                serial_number: Some(mfa_serial.to_string()),
-                token_code: Some(token.to_string()),
-                ..Default::default()
-            })
-            .sync()
-        {
+        match sts.assume_role(arr).sync() {
             Err(e) => panic!("{:?}", e),
             Ok(response) => {
                 let credentials = response.credentials.unwrap();
