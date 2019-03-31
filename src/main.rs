@@ -119,20 +119,21 @@ fn main() {
             ..Default::default()
         };
 
-        //TODO Figure where to put this token request interaction...
-        //TODO Get the MFA token only if necessary
         let arr = match mfa_serial {
             Some(serial) => {
-                let mut token = String::new();
+                let mut buffer = String::new();
                 if !serial.is_empty() {
                     println!("Please type your MFA token for {}: ", serial);
-                    match io::stdin().read_line(&mut token) {
-                        Ok(_) => {
-                            token.pop(); //REMOVES THE \n TODO: Update with Parse
-                        }
-                        Err(error) => println!("error: {}", error),
-                    }
+
+                    io::stdin()
+                        .read_line(&mut buffer)
+                        .expect("Failed to read your input");
                 }
+
+                let token: String = match buffer.trim().parse() {
+                    Ok(t) => t,
+                    Err(_) => panic!("error while reading the token"),
+                };
 
                 AssumeRoleRequest {
                     serial_number: Some(serial.to_string()),
@@ -146,6 +147,7 @@ fn main() {
         // Token Generator
         //TODO Extract this to its own module/file/package...
         //TODO use the default
+        //TODO handle token failures
         let sts = StsClient::new(Region::EuCentral1);
         match sts.assume_role(arr).sync() {
             Err(e) => panic!("{:?}", e),
