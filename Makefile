@@ -8,8 +8,12 @@ MERMAID ?= `which mmdc`
 DOCS_PATH ?= `pwd`/docs
 
 .PHONY: build
-build:
+build: format
 	$(CARGO_BIN) build
+
+.PHONY: format
+format:
+	$(CARGO_BIN) fmt
 
 .PHONY: run
 run: build
