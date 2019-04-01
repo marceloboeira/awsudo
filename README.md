@@ -97,7 +97,8 @@ Want to contribute with code?
 > Available commands
 
 * `make build` - Build the `/target/debug/awsudo`.
-* `make install` - Copy the binary to `/usr/local/bin`.
+* `make build_release` - Build the optmized `/target/release/awsudo`.
+* `make install` - Use cargo insttall.
 * `make test` - Run the tests.
 * `make format` - Format the code following rust standards.
 * `make setup_docs` - One time setup of dependencies for docs.
