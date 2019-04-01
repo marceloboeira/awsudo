@@ -1,6 +1,9 @@
 <p align="center">
   <img src="https://raw.githubusercontent.com/marceloboeira/awsudo/master/docs/logos/logo-transparent.png" width="300">
-  <p align="center">sudo-like behavior for role assumed access on AWS accounts<p>
+  <p align="center">
+    <img src="https://travis-ci.org/marceloboeira/awsudo.svg?branch=master">
+  </p>
+  <p align="center">sudo-like behavior for role assumed access on AWS accounts</p>
 </p>
 
 :warning: **IMPORTANT** the current version is just an experiment, I plan to split the code and test it well.
