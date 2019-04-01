@@ -8,77 +8,25 @@ extern crate rusoto_core;
 extern crate rusoto_sts;
 
 use std::io;
-use std::path::Path;
 use std::process::{Command, Stdio};
 
 use chrono::prelude::*;
-use clap::{App, AppSettings, Arg};
 use ini::Ini;
 use rusoto_core::Region;
 use rusoto_sts::{AssumeRoleRequest, Sts, StsClient};
 
-const AWS_DEFAULT_CONFIG_PATH: &str = ".aws/config";
 const AWS_DEFAULT_SESSION_NAME: &str = "awsudo";
 
 fn main() {
-    // CLI
-    //TODO Extract this to its own module/file/package...
-    let matches = App::new("awsudo - sudo-like behavior for role assumed access on AWS accounts")
-        .version("0.1")
-        .setting(AppSettings::AllowExternalSubcommands)
-        .arg(
-            Arg::with_name("config")
-                .short("c")
-                .long("config")
-                .value_name("FILE")
-                .help("Sets a custom config file other than ~/.aws/credentials")
-                .takes_value(true),
-        )
-        .arg(
-            Arg::with_name("user")
-                .short("u")
-                .long("user")
-                .help("Set the AWS profile name based on the config file")
-                .required(true)
-                .takes_value(true),
-        )
-        .get_matches();
-
-    let mut default_config_file_path = match dirs::home_dir() {
-        Some(path) => path,
-        None => panic!("Something wrong with your home dir"),
-    };
-    default_config_file_path.push(AWS_DEFAULT_CONFIG_PATH);
-
-    let config_file_path = match matches.value_of("config") {
-        Some(value) => Path::new(value),
-        None => default_config_file_path.as_path(),
-    };
-
-    let profile_name = matches.value_of("user").unwrap_or("default");
-    let command = match matches.subcommand() {
-        (external, maybe_matches) => {
-            let args = match maybe_matches {
-                Some(external_matches) => match external_matches.values_of("") {
-                    Some(values) => values.collect::<Vec<&str>>().join(" "),
-                    None => String::from(""),
-                },
-                _ => String::from(" "),
-            };
-
-            vec![String::from(external), args].join(" ")
-        }
-    };
-
-    // END CLI
+    let args = awsudo::cli::parse();
 
     //  State manager
-    let conf = match Ini::load_from_file(config_file_path.clone()) {
+    let conf = match Ini::load_from_file(args.config.clone()) {
         Err(message) => panic!(message),
         Ok(value) => value,
     };
 
-    let section = conf.section(Some(profile_name)).unwrap();
+    let section = conf.section(Some(args.user.clone())).unwrap();
     let role_arn = section.get("role_arn").unwrap();
     let mfa_serial = section.get("mfa_serial");
     //TODO parse region or default
@@ -154,13 +102,13 @@ fn main() {
             Err(e) => panic!("{:?}", e),
             Ok(response) => {
                 let credentials = response.credentials.unwrap();
-                let mut another = match Ini::load_from_file(config_file_path.clone()) {
+                let mut another = match Ini::load_from_file(args.config.clone()) {
                     Err(message) => panic!(message),
                     Ok(value) => value,
                 };
 
                 another
-                    .with_section(Some(profile_name))
+                    .with_section(Some(args.user.clone()))
                     .set("aws_sudo_access_key_id", credentials.access_key_id.clone())
                     .set(
                         "aws_sudo_secret_access_key",
@@ -172,7 +120,7 @@ fn main() {
                         credentials.expiration.clone(),
                     );
 
-                another.write_to_file(config_file_path.clone()).unwrap();
+                another.write_to_file(args.config.clone()).unwrap();
 
                 awsudo::environment::inject(
                     credentials.access_key_id.as_str(),
@@ -187,7 +135,7 @@ fn main() {
     //TODO Extract this to its own module/file/package...
     Command::new("sh")
         .arg("-c")
-        .arg(command)
+        .arg(args.command)
         .stdout(Stdio::inherit())
         .stderr(Stdio::inherit())
         .output()
