@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/marceloboeira/awsudo/master/docs/logos/logo-transparent.png" width="300">
+  <img src="https://raw.githubusercontent.com/marceloboeira/awsudo/master/docs/logos/logo-github.png" width="300">
   <p align="center">
     <img src="https://travis-ci.org/marceloboeira/awsudo.svg?branch=master">
   </p>
