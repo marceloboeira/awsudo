@@ -1,11 +1,9 @@
-# > awsudo
-> sudo-like behavior for role assumed access on AWS accounts
-
-A rewrite of the core behavior of [makethunder/awsudo](https://github.com/makethunder/awsudo/) in [rust](https://github.com/rust-lang/rust).
+<p align="center">
+  <img src="https://raw.githubusercontent.com/marceloboeira/awsudo/master/docs/logos/logo-transparent.png" width="300">
+  <p align="center">sudo-like behavior for role assumed access on AWS accounts<p>
+</p>
 
 :warning: **IMPORTANT** the current version is just an experiment, I plan to split the code and test it well.
-
-See the [motivation](#motivation) for more info.
 
 ## Motivation
 
