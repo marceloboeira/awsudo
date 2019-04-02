@@ -1,0 +1,3 @@
+C SetupCode=Code of the currently installed setup (JOW
+C machine configuration). Use a maximum of 8 characters.
+{"foo": 1}

@@ -4,11 +4,13 @@ extern crate dirs;
 use clap::{App, AppSettings, Arg, ArgMatches};
 
 const AWS_DEFAULT_CONFIG_PATH: &str = ".aws/config";
+const AWS_DEFAULT_CACHE_DIR: &str = ".awsudo/";
 
 pub struct CLI {
     pub user: String,
     pub command: String,
     pub config: String,
+    pub cache_dir: String,
 }
 
 pub fn parse() -> CLI {
@@ -21,6 +23,16 @@ fn from_args(matches: ArgMatches) -> CLI {
         Some(value) => String::from(value),
         None => match dirs::home_dir() {
             Some(path) => match path.join(AWS_DEFAULT_CONFIG_PATH).to_str() {
+                Some(s) => String::from(s),
+                None => panic!("Something wrong with your home dir"),
+            },
+            None => panic!("Something wrong with your home dir"),
+        },
+    };
+    let cache_dir: String = match matches.value_of("cache_dir") {
+        Some(value) => String::from(value),
+        None => match dirs::home_dir() {
+            Some(path) => match path.join(AWS_DEFAULT_CACHE_DIR).to_str() {
                 Some(s) => String::from(s),
                 None => panic!("Something wrong with your home dir"),
             },
@@ -45,6 +57,7 @@ fn from_args(matches: ArgMatches) -> CLI {
         user,
         config,
         command,
+        cache_dir,
     }
 }
 
@@ -57,7 +70,14 @@ fn default<'b, 'c>() -> App<'b, 'c> {
                 .short("c")
                 .long("config")
                 .value_name("FILE")
-                .help("Sets a custom config file other than ~/.aws/credentials")
+                .help("Sets a custom config file other than ~/.aws/config")
+                .takes_value(true),
+        )
+        .arg(
+            Arg::with_name("cache_dir")
+                .long("cache-dir")
+                .value_name("DIR")
+                .help("Sets a custom directory for credentials caching ~/.awsudo/")
                 .takes_value(true),
         )
         .arg(
@@ -96,6 +116,16 @@ mod tests {
     }
 
     #[test]
+    fn it_sets_default_cache_dir_config() {
+        let result = cli::from_args(cli::default().get_matches_from(vec!["awsudo", "-u", "jeff"]));
+
+        assert_eq!(
+            result.cache_dir,
+            dirs::home_dir().unwrap().join(".awsudo/").to_str().unwrap()
+        );
+    }
+
+    #[test]
     fn it_parses_config() {
         let result = cli::from_args(cli::default().get_matches_from(vec![
             "awsudo",
@@ -127,8 +157,9 @@ mod tests {
 
     #[test]
     fn it_parses_command_with_attribute() {
-        let result =
-            cli::from_args(cli::default().get_matches_from(vec!["awsudo", "-u", "jeff", "ls",  "-a"]));
+        let result = cli::from_args(
+            cli::default().get_matches_from(vec!["awsudo", "-u", "jeff", "ls", "-a"]),
+        );
 
         assert_eq!(result.command, "ls -a");
     }
