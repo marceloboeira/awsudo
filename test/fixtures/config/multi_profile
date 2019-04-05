@@ -1,0 +1,4 @@
+[complete]
+role_arn=example-arn
+mfa_serial=example-mfa
+region=us-east-1

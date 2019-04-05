@@ -7,47 +7,40 @@ extern crate ini;
 extern crate rusoto_core;
 extern crate rusoto_sts;
 
+use awsudo::credentials::fetcher::strategies::cache::Cache;
+use awsudo::credentials::fetcher::Fetcher;
+use rusoto_core::Region;
+use rusoto_sts::{AssumeRoleRequest, Sts, StsClient};
 use std::io;
 use std::process::{Command, Stdio};
 
-use ini::Ini;
-use rusoto_core::Region;
-use rusoto_sts::{AssumeRoleRequest, Sts, StsClient};
-
-use awsudo::credentials::fetcher::strategies::cache;
-use awsudo::credentials::fetcher::Fetcher;
+use awsudo::profile::Profile;
 
 const AWS_DEFAULT_SESSION_NAME: &str = "awsudo";
 
 fn main() {
     let args = awsudo::cli::parse();
 
-    //  State manager
-    let conf = match Ini::load_from_file(args.config.clone()) {
-        Err(message) => panic!(message),
-        Ok(value) => value,
-    };
-
-    let section = conf.section(Some(args.user.clone())).unwrap();
-    let role_arn = section.get("role_arn").unwrap();
-    let mfa_serial = section.get("mfa_serial");
-    //TODO parse region or default
-
-    let c = cache::Cache {
+    let cache = Cache {
         dir: args.cache_dir,
         profile: args.user.clone(),
     };
 
-    match c.fetch() {
+    match cache.fetch() {
         Ok(credentials) => credentials.inject(),
         _ => {
+            let profile = match Profile::load_from(args.config, args.user) {
+                Ok(p) => p,
+                Err(e) => panic!(e),
+            };
+
             let base_arr = AssumeRoleRequest {
-                role_arn: role_arn.to_string(),
+                role_arn: profile.role_arn,
                 role_session_name: AWS_DEFAULT_SESSION_NAME.to_owned(),
                 ..Default::default()
             };
 
-            let arr = match mfa_serial {
+            let arr = match profile.mfa_serial {
                 Some(serial) => {
                     let mut buffer = String::new();
                     if !serial.is_empty() {
@@ -76,32 +69,11 @@ fn main() {
             //TODO Extract this to its own module/file/package...
             //TODO use the default
             //TODO handle token failures
-            // TODO DISABLE WRITING (WAIT FOR PROFILE WRITER)
             let sts = StsClient::new(Region::EuCentral1);
             match sts.assume_role(arr).sync() {
                 Err(e) => panic!("{:?}", e),
                 Ok(response) => {
                     let credentials = response.credentials.unwrap();
-                    let mut another = match Ini::load_from_file(args.config.clone()) {
-                        Err(message) => panic!(message),
-                        Ok(value) => value,
-                    };
-
-                    another
-                        .with_section(Some(args.user.clone()))
-                        .set("aws_sudo_access_key_id", credentials.access_key_id.clone())
-                        .set(
-                            "aws_sudo_secret_access_key",
-                            credentials.secret_access_key.clone(),
-                        )
-                        .set("aws_sudo_session_token", credentials.session_token.clone())
-                        .set(
-                            "aws_sudo_session_expiration_date",
-                            credentials.expiration.clone(),
-                        );
-
-                    another.write_to_file(args.config.clone()).unwrap();
-
                     awsudo::environment::inject(
                         credentials.access_key_id.as_str(),
                         credentials.secret_access_key.as_str(),

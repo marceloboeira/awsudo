@@ -1,0 +1,12 @@
+[missing_arn]
+foo=1
+region=eu-central-2
+mfa_serial=210418
+
+[missing_mfa]
+role_arn=example-arn
+region=us-east-1
+
+[missing_region]
+role_arn=example-arn
+mfa_serial=example-mfa
