@@ -59,7 +59,7 @@ mod tests {
 
     fn fixtures_path() -> String {
         let mut p = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-        p.push("test/fixtures");
+        p.push("test/fixtures/cache");
         p.to_str().unwrap().to_string()
     }
 
