@@ -7,9 +7,9 @@ extern crate ini;
 extern crate rusoto_core;
 extern crate rusoto_sts;
 
-use awsudo::credentials::fetcher::strategies::cache::Cache;
-use awsudo::credentials::fetcher::strategies::request::Request;
-use awsudo::credentials::fetcher::Fetcher;
+use awsudo::cache::Cache;
+use awsudo::fetcher::Fetcher;
+use awsudo::request::Request;
 
 use std::io;
 use std::process::{Command, Stdio};
@@ -34,7 +34,6 @@ pub fn token_collector(mfa_serial: String) -> Option<String> {
 fn main() {
     // Parse command arguments
     let args = awsudo::cli::parse();
-
 
     // Get Credentials to be injected
     // First, try to get credentials from Cache

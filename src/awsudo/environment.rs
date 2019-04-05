@@ -20,6 +20,7 @@ mod tests {
             access_key_id: "m".to_string(),
             secret_access_key: "b".to_string(),
             session_token: "j".to_string(),
+            cached: false,
         }
         .inject();
 

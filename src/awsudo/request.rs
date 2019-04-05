@@ -1,8 +1,8 @@
 use rusoto_core::Region;
 use rusoto_sts::{AssumeRoleRequest, Sts, StsClient};
 
-use awsudo::credentials::fetcher::Fetcher;
 use awsudo::credentials::Credentials;
+use awsudo::fetcher::Fetcher;
 use awsudo::profile::Profile;
 
 const AWS_DEFAULT_SESSION_NAME: &str = "awsudo";
@@ -42,6 +42,7 @@ impl Fetcher for Request {
                     access_key_id: c.access_key_id,
                     secret_access_key: c.secret_access_key,
                     session_token: c.session_token,
+                    cached: false,
                 }),
                 None => Err("Request to AWS failed"),
             },

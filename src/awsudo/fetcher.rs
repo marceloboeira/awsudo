@@ -1,5 +1,3 @@
-pub mod strategies;
-
 use awsudo::credentials::Credentials;
 
 pub trait Fetcher {
