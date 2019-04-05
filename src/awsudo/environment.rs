@@ -9,23 +9,19 @@ impl Credentials {
     }
 }
 
-pub fn inject(key: &str, secret: &str, token: &str) {
-    Credentials {
-        access_key_id: String::from(key),
-        secret_access_key: String::from(secret),
-        session_token: String::from(token),
-    }
-    .inject()
-}
-
 #[cfg(test)]
 mod tests {
-    use awsudo::environment::inject;
+    use awsudo::credentials::Credentials;
     use std::env;
 
     #[test]
     fn it_injects_credential_variable_to_env() {
-        inject("m", "b", "j");
+        Credentials {
+            access_key_id: "m".to_string(),
+            secret_access_key: "b".to_string(),
+            session_token: "j".to_string(),
+        }
+        .inject();
 
         assert_eq!(env::var("AWS_ACCESS_KEY_ID"), Ok("m".to_string()));
         assert_eq!(env::var("AWS_SECRET_ACCESS_KEY"), Ok("b".to_string()));
