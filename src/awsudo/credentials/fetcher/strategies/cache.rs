@@ -1,6 +1,6 @@
 extern crate ini;
 
-use awsudo::credentials::fetcher::{Fetcher, Result};
+use awsudo::credentials::fetcher::Fetcher;
 use awsudo::credentials::Credentials;
 use chrono::{DateTime, Utc};
 use ini::Ini;
@@ -12,9 +12,9 @@ pub struct Cache {
 }
 
 impl Fetcher for Cache {
-    fn fetch(&self) -> Result {
+    fn fetch(&self) -> Result<Credentials, &'static str> {
         match Ini::load_from_file(Path::new(&self.dir).join(&self.profile)) {
-            Err(_) => Result::Error("Cache file is not present or not valid".to_string()),
+            Err(_) => Err("Cache file is not present or not valid"),
             Ok(ini_file) => {
                 let section = ini_file.general_section();
 
@@ -32,22 +32,18 @@ impl Fetcher for Cache {
                     ) => match session_expires_at_raw.parse::<DateTime<Utc>>() {
                         Ok(session_expires_at) => {
                             if session_expires_at > Utc::now() {
-                                Result::Success(Credentials {
+                                Ok(Credentials {
                                     access_key_id: access_key_id.clone(),
                                     secret_access_key: secret_access_key.clone(),
                                     session_token: session_token.clone(),
                                 })
                             } else {
-                                Result::Error("Cache file is expired".to_string())
+                                Err("Cache file is expired")
                             }
                         }
-                        Err(_) => {
-                            Result::Error("Cache file does not have a valid date".to_string())
-                        }
+                        Err(_) => Err("Cache file does not have a valid date"),
                     },
-                    (_, _, _, _) => {
-                        Result::Error("Cache file is missing required values".to_string())
-                    }
+                    (_, _, _, _) => Err("Cache file is missing required values"),
                 }
             }
         }
@@ -57,7 +53,7 @@ impl Fetcher for Cache {
 #[cfg(test)]
 mod tests {
     use awsudo::credentials::fetcher::strategies::cache;
-    use awsudo::credentials::fetcher::{Fetcher, Result};
+    use awsudo::credentials::fetcher::Fetcher;
     use awsudo::credentials::Credentials;
     use std::path::PathBuf;
 
@@ -74,10 +70,7 @@ mod tests {
             profile: "path".to_string(),
         };
 
-        assert_eq!(
-            c.fetch(),
-            Result::Error("Cache file is not present or not valid".to_string()),
-        );
+        assert_eq!(c.fetch(), Err("Cache file is not present or not valid"));
     }
 
     #[test]
@@ -87,10 +80,7 @@ mod tests {
             profile: "invalid".to_string(),
         };
 
-        assert_eq!(
-            c.fetch(),
-            Result::Error("Cache file is missing required values".to_string()),
-        );
+        assert_eq!(c.fetch(), Err("Cache file is missing required values"));
     }
 
     #[test]
@@ -100,10 +90,7 @@ mod tests {
             profile: "invalid_missing_values".to_string(),
         };
 
-        assert_eq!(
-            c.fetch(),
-            Result::Error("Cache file is missing required values".to_string()),
-        );
+        assert_eq!(c.fetch(), Err("Cache file is missing required values"));
     }
 
     #[test]
@@ -113,10 +100,7 @@ mod tests {
             profile: "invalid_date".to_string(),
         };
 
-        assert_eq!(
-            c.fetch(),
-            Result::Error("Cache file does not have a valid date".to_string()),
-        );
+        assert_eq!(c.fetch(), Err("Cache file does not have a valid date"));
     }
 
     #[test]
@@ -126,10 +110,7 @@ mod tests {
             profile: "invalid_expired".to_string(),
         };
 
-        assert_eq!(
-            c.fetch(),
-            Result::Error("Cache file is expired".to_string()),
-        );
+        assert_eq!(c.fetch(), Err("Cache file is expired"));
     }
 
     #[test]
@@ -141,7 +122,7 @@ mod tests {
 
         assert_eq!(
             c.fetch(),
-            Result::Success(Credentials {
+            Ok(Credentials {
                 access_key_id: "ASIA3NOTVALID2WN5".to_string(),
                 secret_access_key: "8s7k+21mKladUU9d".to_string(),
                 session_token: "AgoGb3JpZ2luECwaDGV1LW".to_string(),

@@ -15,7 +15,7 @@ use rusoto_core::Region;
 use rusoto_sts::{AssumeRoleRequest, Sts, StsClient};
 
 use awsudo::credentials::fetcher::strategies::cache;
-use awsudo::credentials::fetcher::{Fetcher, Result};
+use awsudo::credentials::fetcher::Fetcher;
 
 const AWS_DEFAULT_SESSION_NAME: &str = "awsudo";
 
@@ -39,7 +39,7 @@ fn main() {
     };
 
     match c.fetch() {
-        Result::Success(credentials) => credentials.inject(),
+        Ok(credentials) => credentials.inject(),
         _ => {
             let base_arr = AssumeRoleRequest {
                 role_arn: role_arn.to_string(),
@@ -76,6 +76,7 @@ fn main() {
             //TODO Extract this to its own module/file/package...
             //TODO use the default
             //TODO handle token failures
+            // TODO DISABLE WRITING (WAIT FOR PROFILE WRITER)
             let sts = StsClient::new(Region::EuCentral1);
             match sts.assume_role(arr).sync() {
                 Err(e) => panic!("{:?}", e),
