@@ -23,11 +23,11 @@ run: build
 	@$(BIN_PATH)
 
 .PHONY: install
-install: build
+install: build_release
 	$(CARGO_BIN) install --force
 
 .PHONY: test
-test:
+test: format
 	@$(CARGO_BIN) test
 
 .PHONY: setup_docs
