@@ -1,6 +1,6 @@
 [package]
 name = "awsudo"
-version = "0.0.1"
+version = "0.1.0"
 authors = ["Marcelo Boeira <me@marceloboeira.com>"]
 
 [dependencies]

@@ -1,10 +1,12 @@
 CARGO_BIN ?= `which cargo`
-TARGET_PATH ?= `pwd`/target/debug
+TARGET_PATH ?= `pwd`/target/release
+BIN_VERSION ?= 0.1.0
 BIN_NAME ?= awsudo
 BIN_PATH ?= $(TARGET_PATH)/$(BIN_NAME)
 NPM ?= `which npm`
 MERMAID ?= `which mmdc`
 DOCS_PATH ?= `pwd`/docs
+RELEASE_FILE ?= $(BIN_NAME)-$(BIN_VERSION).x86_64-apple-darwin.tar.gz
 
 .PHONY: build
 build: format
@@ -37,3 +39,8 @@ setup_docs:
 .PHONY: docs
 docs:
 	@$(MERMAID) -i $(DOCS_PATH)/workflow.mmd -o $(DOCS_PATH)/workflow.png -t neutral
+
+.PHONY: release
+release: build_release
+	@tar -czf $(RELEASE_FILE) $(BIN_PATH)
+	@shasum -a 256 $(RELEASE_FILE)

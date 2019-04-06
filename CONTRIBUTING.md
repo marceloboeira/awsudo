@@ -20,6 +20,7 @@ Want to contribute with code?
 
 * `make build` - Build the `/target/debug/awsudo`.
 * `make build_release` - Build the optmized `/target/release/awsudo`.
+* `make release` - Build and generate the release file for the given version.
 * `make install` - Use cargo insttall.
 * `make test` - Run the tests.
 * `make format` - Format the code following rust standards.
