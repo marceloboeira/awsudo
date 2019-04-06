@@ -16,12 +16,13 @@ graph TD
   token_file_validation -->|Yes| token_file_user_validation{Is there a token for the given user?}
   token_file_user_validation -->|No| generate_token
   token_file_user_validation -->|Yes| token_file_timestamp_validation{Is the token timestamp still valid?}
-  token_file_timestamp_validation -->|Yes| generate_token
+  token_file_timestamp_validation -->|No| generate_token
   token_file_timestamp_validation -->|Yes| inject_env
   inject_env --> run_command
   generate_token --> aws_file_present{Is AWS config file present?}
   aws_file_present -->|No| error
   aws_file_present -->|Yes| aws_file_user{Is the given user present on AWS file?}
+  aws_file_user -->|No| error
   aws_file_user -->|Yes| aws_file_user_properties{Are all the required properties set?}
   aws_file_user_properties --> |No| error
   aws_file_user_properties --> |Yes| aws_file_user_mfa{Is there an MFA set?}
