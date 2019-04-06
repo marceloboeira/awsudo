@@ -6,7 +6,32 @@
   </p>
 </p>
 
-Yet another `awsudo`? See the [Motivation](#motivation) section.
+## What does it do?
+
+The AWS sudo, inject aws credentials to the command you want to run:
+
+```shell
+awsudo -u staging env | grep AWS
+```
+
+Results in:
+```shell
+AWS_SESSION_TOKEN=********
+AWS_SECRET_ACCESS_KEY=**************
+AWS_ACCESS_KEY_ID=********
+```
+
+**Notice** - `awsudo` was meant for local usage, it is not for server authentication.
+
+See the [Motivation](#motivation) section for more info.
+
+### Workflow
+
+This is how the CLI works under the hood:
+
+(click to see the large version)
+
+<img src="docs/workflow.png" width="10%">
 
 ## Usage
 
@@ -28,13 +53,15 @@ OPTIONS:
 
 Thanks [clap](https://github.com/clap-rs/clap) for that.
 
-For example, to get all of the S3 buckets of the **production** account:
+### Examples
+
+Get all of the S3 buckets of the **production** account:
 
 ```shell
 awsudo -u production aws s3 ls
 ```
 
-Runnin a executable that needs AWS credentials:
+Run a executable that needs AWS credentials:
 
 ```shell
 awsudo -u staging delete_s3_buckets "s3://staging-acc/foo"
@@ -55,16 +82,6 @@ Then after:
 ```shell
 awss [subcomand]
 ```
-
-## Workflow
-
-This is how the CLI works under the hood, for transparency and organization purposes.
-
-**Notice** some features of the workflow are a work in progress.
-
-(click to see the large version)
-
-<img src="docs/workflow.png" width="10%">
 
 # Motivation
 
