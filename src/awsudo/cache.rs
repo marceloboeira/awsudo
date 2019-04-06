@@ -8,12 +8,18 @@ use std::path::Path;
 
 pub struct Cache {
     pub dir: String,
-    pub profile: String,
+    pub file: String,
+}
+
+impl Cache {
+    pub fn new(dir: String, file: String) -> Cache {
+        Cache { dir, file }
+    }
 }
 
 impl Fetcher for Cache {
     fn fetch(&self) -> Result<Credentials, &'static str> {
-        match Ini::load_from_file(Path::new(&self.dir).join(&self.profile)) {
+        match Ini::load_from_file(Path::new(&self.dir).join(&self.file)) {
             Err(_) => Err("Cache file is not present or not valid"),
             Ok(ini_file) => {
                 let section = ini_file.general_section();
@@ -68,7 +74,7 @@ mod tests {
     fn it_returns_error_when_the_file_is_not_present() {
         let c = Cache {
             dir: "invalid".to_string(),
-            profile: "path".to_string(),
+            file: "path".to_string(),
         };
 
         assert_eq!(c.fetch(), Err("Cache file is not present or not valid"));
@@ -78,7 +84,7 @@ mod tests {
     fn it_returns_error_when_the_file_is_not_ini_valid() {
         let c = Cache {
             dir: fixtures_path(),
-            profile: "invalid".to_string(),
+            file: "invalid".to_string(),
         };
 
         assert_eq!(c.fetch(), Err("Cache file is missing required values"));
@@ -88,7 +94,7 @@ mod tests {
     fn it_returns_error_when_the_file_is_missing_values_valid() {
         let c = Cache {
             dir: fixtures_path(),
-            profile: "invalid_missing_values".to_string(),
+            file: "invalid_missing_values".to_string(),
         };
 
         assert_eq!(c.fetch(), Err("Cache file is missing required values"));
@@ -98,7 +104,7 @@ mod tests {
     fn it_returns_error_when_the_file_date_is_not_valid() {
         let c = Cache {
             dir: fixtures_path(),
-            profile: "invalid_date".to_string(),
+            file: "invalid_date".to_string(),
         };
 
         assert_eq!(c.fetch(), Err("Cache file does not have a valid date"));
@@ -108,7 +114,7 @@ mod tests {
     fn it_returns_error_when_the_file_date_is_expired() {
         let c = Cache {
             dir: fixtures_path(),
-            profile: "invalid_expired".to_string(),
+            file: "invalid_expired".to_string(),
         };
 
         assert_eq!(c.fetch(), Err("Cache file is expired"));
@@ -118,7 +124,7 @@ mod tests {
     fn it_returns_the_credentails_when_the_valid() {
         let c = Cache {
             dir: fixtures_path(),
-            profile: "valid".to_string(),
+            file: "valid".to_string(),
         };
 
         assert_eq!(

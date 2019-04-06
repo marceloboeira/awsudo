@@ -37,25 +37,16 @@ fn main() {
 
     // Get Credentials to be injected
     // First, try to get credentials from Cache
-    let cache = Cache {
-        dir: args.cache_dir,
-        profile: args.user.clone(),
-    };
+    let cache = Cache::new(args.cache_dir.clone(), args.user.clone());
     let credentials = match cache.fetch() {
         Ok(credentials) => credentials,
         Err(_) => {
             // If that doesn't work, it tries then to request a new on from STS
-            let profile = match Profile::load_from(args.config, args.user) {
-                Ok(p) => p,
-                Err(e) => panic!(e),
-            };
-            let r = Request {
-                profile: profile,
-                token_collector: token_collector,
-            };
-
-            match r.fetch() {
-                Ok(credentials) => credentials,
+            match Profile::load_from(args.config, args.user) {
+                Ok(p) => match Request::new(p, token_collector).fetch() {
+                    Ok(credentials) => credentials,
+                    Err(e) => panic!(e),
+                },
                 Err(e) => panic!(e),
             }
         }

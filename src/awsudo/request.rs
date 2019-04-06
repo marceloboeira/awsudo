@@ -12,6 +12,15 @@ pub struct Request {
     pub token_collector: fn(String) -> Option<String>,
 }
 
+impl Request {
+    pub fn new(profile: Profile, token_collector: fn(String) -> Option<String>) -> Request {
+        Request {
+            profile,
+            token_collector,
+        }
+    }
+}
+
 impl Fetcher for Request {
     fn fetch(&self) -> Result<Credentials, &'static str> {
         let base_request = AssumeRoleRequest {
