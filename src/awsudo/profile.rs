@@ -1,6 +1,6 @@
 extern crate ini;
 
-use ini::Ini;
+use self::ini::Ini;
 use std::path::Path;
 
 #[derive(Debug)]

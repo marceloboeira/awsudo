@@ -1,5 +1,8 @@
-use rusoto_core::Region;
-use rusoto_sts::{AssumeRoleRequest, Sts, StsClient};
+extern crate rusoto_core;
+extern crate rusoto_sts;
+
+use self::rusoto_core::Region;
+use self::rusoto_sts::{AssumeRoleRequest, Sts, StsClient};
 
 use awsudo::credentials::Credentials;
 use awsudo::fetcher::Fetcher;

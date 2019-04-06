@@ -1,20 +1,13 @@
 mod awsudo;
 
-extern crate chrono;
-extern crate clap;
-extern crate dirs;
-extern crate ini;
-extern crate rusoto_core;
-extern crate rusoto_sts;
-
 use awsudo::cache::Cache;
+use awsudo::cli;
+use awsudo::dispatcher;
 use awsudo::fetcher::Fetcher;
+use awsudo::profile::Profile;
 use awsudo::request::Request;
 
 use std::io;
-use std::process::{Command, Stdio};
-
-use awsudo::profile::Profile;
 
 pub fn token_collector(mfa_serial: String) -> Option<String> {
     let mut buffer = String::new();
@@ -33,7 +26,7 @@ pub fn token_collector(mfa_serial: String) -> Option<String> {
 
 fn main() {
     // Parse command arguments
-    let args = awsudo::cli::parse();
+    let args = cli::parse();
 
     // Get Credentials to be injected
     // First, try to get credentials from Cache
@@ -62,12 +55,5 @@ fn main() {
     };
 
     // Run the command with the Environment Credentials
-    //TODO Extract this to its own module/file/package...
-    Command::new("sh")
-        .arg("-c")
-        .arg(args.command)
-        .stdout(Stdio::inherit())
-        .stderr(Stdio::inherit())
-        .output()
-        .expect("Something went wrong");
+    dispatcher::run(args.command);
 }

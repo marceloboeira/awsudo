@@ -1,7 +1,6 @@
 extern crate clap;
-extern crate dirs;
 
-use clap::{App, AppSettings, Arg, ArgMatches};
+use self::clap::{App, AppSettings, Arg, ArgMatches};
 
 const AWS_DEFAULT_CONFIG_PATH: &str = ".aws/config";
 const AWS_DEFAULT_CACHE_DIR: &str = ".awsudo/";

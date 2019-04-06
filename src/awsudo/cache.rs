@@ -1,9 +1,11 @@
+extern crate chrono;
 extern crate ini;
+
+use self::chrono::{DateTime, Duration, Utc};
+use self::ini::Ini;
 
 use awsudo::credentials::Credentials;
 use awsudo::fetcher::Fetcher;
-use chrono::{DateTime, Duration, Utc};
-use ini::Ini;
 use std::fs;
 use std::path::Path;
 
@@ -107,7 +109,6 @@ mod tests {
         p.to_str().unwrap().to_string()
     }
 
-    /* Cache::fetch */
     #[test]
     fn it_returns_error_when_the_file_is_not_present() {
         assert_eq!(
@@ -207,6 +208,6 @@ mod tests {
 
         assert_eq!(Path::new(&fixtures_tmp_path()).join("file").exists(), true);
 
-        fs::remove_dir_all(fixtures_tmp_path());
+        fs::remove_dir_all(fixtures_tmp_path()).unwrap();
     }
 }
