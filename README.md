@@ -21,8 +21,9 @@ FLAGS:
     -V, --version    Prints version information
 
 OPTIONS:
-    -c, --config <FILE>    Sets a custom config file other than ~/.aws/credentials
-    -u, --user <user>      Set the AWS profile name based on the config file
+        --cache-dir <DIR>    Sets a custom directory for credentials caching ~/.awsudo/
+    -c, --config <FILE>      Sets a custom config file other than ~/.aws/config
+    -u, --user <user>        Set the AWS profile name based on the config file
 ```
 
 Thanks [clap](https://github.com/clap-rs/clap) for that.
