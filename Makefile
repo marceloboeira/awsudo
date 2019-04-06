@@ -42,5 +42,5 @@ docs:
 
 .PHONY: release
 release: build_release
-	@tar -czf $(RELEASE_FILE) $(BIN_PATH)
+	@cd $(TARGET_PATH) && tar -zcvf ../../$(RELEASE_FILE) $(BIN_NAME)
 	@shasum -a 256 $(RELEASE_FILE)
