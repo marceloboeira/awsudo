@@ -33,6 +33,24 @@ This is how the CLI works under the hood:
 
 <img src="docs/workflow.png" width="10%">
 
+## Setup
+
+It is assumed that you have `awscli` installed and configured OR at least, the `~/.aws/config` file following this pattern:
+
+```
+[profile]
+role_arn=...
+mfa_serial=... (if necessary)
+region=...
+```
+
+### macOS
+
+```shell
+brew tap marceloboeira/formulas
+brew install marceloboeira/formulas/awsudo
+```
+
 ## Usage
 
 ```
