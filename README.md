@@ -6,8 +6,6 @@
   </p>
 </p>
 
-:warning: **IMPORTANT** the current version is just an experiment, I plan to split the code and test it well.
-
 ## Motivation
 
 Main motivation was to write something that I would use everyday with rust.
