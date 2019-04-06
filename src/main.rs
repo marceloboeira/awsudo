@@ -52,10 +52,14 @@ fn main() {
         }
     };
 
-    //TODO Cache Token
-
     // Inject Environment Variables from Credentials
     credentials.inject();
+
+    // Persist Credentials on Cache
+    match cache.persist(credentials) {
+        Err(_) => println!("Failed to cache"),
+        Ok(_) => (),
+    };
 
     // Run the command with the Environment Credentials
     //TODO Extract this to its own module/file/package...

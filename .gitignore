@@ -1,2 +1,7 @@
+# Rust
 /target
 **/*.rs.bk
+
+# Fixtures
+test/fixtures/tmp/
+!test/fixtures/tmp/.keep
