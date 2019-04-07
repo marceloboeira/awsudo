@@ -4,6 +4,7 @@ version = "0.1.0"
 authors = ["Marcelo Boeira <me@marceloboeira.com>"]
 
 [profile.release]
+lto = true
 panic = "abort"
 
 [dependencies]
