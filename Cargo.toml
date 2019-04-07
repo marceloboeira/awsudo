@@ -3,6 +3,9 @@ name = "awsudo"
 version = "0.1.0"
 authors = ["Marcelo Boeira <me@marceloboeira.com>"]
 
+[profile.release]
+panic = "abort"
+
 [dependencies]
 clap = "2.31.2"
 rusoto_core = "0.33"
