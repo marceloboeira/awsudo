@@ -69,21 +69,21 @@ fn default<'b, 'c>() -> App<'b, 'c> {
                 .short("c")
                 .long("config")
                 .value_name("FILE")
-                .help("Sets a custom config file other than ~/.aws/config")
+                .help("Custom config file, defaults to: ~/.aws/config")
                 .takes_value(true),
         )
         .arg(
             Arg::with_name("cache_dir")
                 .long("cache-dir")
                 .value_name("DIR")
-                .help("Sets a custom directory for credentials caching ~/.awsudo/")
+                .help("Custom directory for credentials caching, defaults to ~/.awsudo/")
                 .takes_value(true),
         )
         .arg(
             Arg::with_name("user")
                 .short("u")
                 .long("user")
-                .help("Set the AWS profile name based on the config file")
+                .help("AWS profile name based on the config file")
                 .required(true)
                 .takes_value(true),
         )

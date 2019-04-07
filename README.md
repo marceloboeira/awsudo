@@ -54,7 +54,7 @@ brew install marceloboeira/formulas/awsudo
 ## Usage
 
 ```
-awsudo - sudo-like behavior for role assumed access on AWS accounts
+awsudo - sudo-like behavior for role assumed access on AWS accounts 0.1.0
 
 USAGE:
     awsudo [OPTIONS] --user <user> [SUBCOMMAND]
@@ -64,9 +64,9 @@ FLAGS:
     -V, --version    Prints version information
 
 OPTIONS:
-        --cache-dir <DIR>    Sets a custom directory for credentials caching ~/.awsudo/
-    -c, --config <FILE>      Sets a custom config file other than ~/.aws/config
-    -u, --user <user>        Set the AWS profile name based on the config file
+        --cache-dir <DIR>    Custom directory for credentials caching, defaults to ~/.awsudo/
+    -c, --config <FILE>      Custom config file, defaults to: ~/.aws/config
+    -u, --user <user>        AWS profile name based on the config file
 ```
 
 Thanks [clap](https://github.com/clap-rs/clap) for that.
