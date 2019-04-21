@@ -9,7 +9,7 @@ pub struct CLI {
     pub user: String,
     pub command: String,
     pub config: String,
-    pub cache_dir: String,
+    pub cache_dir: std::path::PathBuf,
 }
 
 pub fn parse() -> CLI {
@@ -32,10 +32,7 @@ fn from_args(matches: ArgMatches) -> CLI {
         .map(|s| std::path::PathBuf::from(s))
         .or(dirs::runtime_dir().map(|path| path.join(AWS_DEFAULT_CACHE_DIR)))
         .or(dirs::home_dir().map(|path| path.join(AWS_DEFAULT_CACHE_DIR)))
-        .expect("Something wrong with cache_dir")
-        .to_str()
-        .map(|s| s.to_owned())
-        .expect("Illegal utf-8 in cache_dir");
+        .expect("Something wrong with cache_dir");
 
     let command = match matches.subcommand() {
         (external, maybe_matches) => {

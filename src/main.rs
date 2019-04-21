@@ -30,7 +30,7 @@ fn main() {
 
     // Get Credentials to be injected
     // First, try to get credentials from Cache
-    let cache = Cache::new(args.cache_dir.clone(), args.user.clone());
+    let cache = Cache::new(args.cache_dir, &args.user);
     let credentials = match cache.fetch() {
         Ok(credentials) => credentials,
         Err(_) => {

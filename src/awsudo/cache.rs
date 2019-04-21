@@ -7,16 +7,16 @@ use self::ini::Ini;
 use awsudo::credentials::Credentials;
 use awsudo::fetcher::Fetcher;
 use std::fs;
-use std::path::Path;
+use std::path::PathBuf;
 
 pub struct Cache {
-    pub dir: String,
+    pub dir: PathBuf,
     pub file: String,
 }
 
 impl Cache {
-    pub fn new(dir: String, file: String) -> Cache {
-        Cache { dir, file }
+    pub fn new(dir: PathBuf, filename: &str) -> Cache {
+        Cache { dir, file: filename.to_owned() }
     }
 }
 
@@ -25,9 +25,9 @@ impl Cache {
         if credentials.cached {
             Ok(())
         } else {
-            match fs::create_dir_all(self.dir.clone()) {
+            match fs::create_dir_all(&self.dir) {
                 Ok(_) => {
-                    let path = Path::new(&self.dir).join(&self.file);
+                    let path = self.dir.join(&self.file);
                     //TODO move this logic to credentials (read from STS request)
                     let expires_at = (Utc::now() + Duration::hours(1)).to_rfc3339();
 
@@ -51,7 +51,7 @@ impl Cache {
 
 impl Fetcher for Cache {
     fn fetch(&self) -> Result<Credentials, &'static str> {
-        match Ini::load_from_file(Path::new(&self.dir).join(&self.file)) {
+        match Ini::load_from_file(self.dir.join(&self.file)) {
             Err(_) => Err("Cache file is not present or not valid"),
             Ok(ini_file) => {
                 let section = ini_file.general_section();
