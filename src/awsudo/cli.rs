@@ -28,16 +28,15 @@ fn from_args(matches: ArgMatches) -> CLI {
             None => panic!("Something wrong with your home dir"),
         },
     };
-    let cache_dir: String = match matches.value_of("cache_dir") {
-        Some(value) => String::from(value),
-        None => match dirs::home_dir() {
-            Some(path) => match path.join(AWS_DEFAULT_CACHE_DIR).to_str() {
-                Some(s) => String::from(s),
-                None => panic!("Something wrong with your home dir"),
-            },
-            None => panic!("Something wrong with your home dir"),
-        },
-    };
+    let cache_dir = matches.value_of("cache_dir")
+        .map(|s| std::path::PathBuf::from(s))
+        .or(dirs::runtime_dir().map(|path| path.join(AWS_DEFAULT_CACHE_DIR)))
+        .or(dirs::home_dir().map(|path| path.join(AWS_DEFAULT_CACHE_DIR)))
+        .expect("Something wrong with cache_dir")
+        .to_str()
+        .map(|s| s.to_owned())
+        .expect("Illegal utf-8 in cache_dir");
+
     let command = match matches.subcommand() {
         (external, maybe_matches) => {
             let args = match maybe_matches {
