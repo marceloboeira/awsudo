@@ -9,8 +9,8 @@ panic = "abort"
 
 [dependencies]
 clap = "2.31.2"
-rusoto_core = "0.33"
-rusoto_sts = "0.33"
+rusoto_core = "0.38"
+rusoto_sts = "0.38"
 rust-ini = "0.12"
 chrono = "0.4"
 dirs = "1.0.5"
