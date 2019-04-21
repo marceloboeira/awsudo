@@ -62,7 +62,7 @@ fn from_args(matches: ArgMatches) -> CLI {
 
 fn default<'b, 'c>() -> App<'b, 'c> {
     App::new("awsudo - sudo-like behavior for role assumed access on AWS accounts")
-        .version("0.1.1")
+        .version(clap::crate_version!())
         .setting(AppSettings::AllowExternalSubcommands)
         .arg(
             Arg::with_name("config")
