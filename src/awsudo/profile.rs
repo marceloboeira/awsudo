@@ -20,9 +20,10 @@ impl PartialEq for Profile {
 
 impl Profile {
     pub fn load_from(file_path: String, user: String) -> Result<Profile, &'static str> {
+        let profile = format!("profile {}", user);
         match Ini::load_from_file(Path::new(&file_path)) {
             Err(_) => Err("Profile file not found"),
-            Ok(ini) => match ini.section(Some(user.to_owned())) {
+            Ok(ini) => match ini.section(Some(profile.to_owned())) {
                 Some(s) => match (s.get("role_arn"), s.get("mfa_serial"), s.get("region")) {
                     (None, _, _) => Err("Profile role_arn not found"),
                     (Some(role_arn), mfa, region) => Ok(Profile {
