@@ -38,11 +38,13 @@ This is how the CLI works under the hood:
 It is assumed that you have `awscli` installed and configured OR at least, the `~/.aws/config` file following this pattern:
 
 ```
-[profile]
+[profile foo]
 role_arn=...
 mfa_serial=... (if necessary)
 region=...
 ```
+
+More information: https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html
 
 ### macOS
 
