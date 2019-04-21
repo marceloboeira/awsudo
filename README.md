@@ -56,7 +56,7 @@ brew install marceloboeira/formulas/awsudo
 ## Usage
 
 ```
-awsudo - sudo-like behavior for role assumed access on AWS accounts 0.1.0
+awsudo - sudo-like behavior for role assumed access on AWS accounts 0.1.1
 
 USAGE:
     awsudo [OPTIONS] --user <user> [SUBCOMMAND]

@@ -1,6 +1,6 @@
 CARGO_BIN ?= `which cargo`
 TARGET_PATH ?= `pwd`/target/release
-BIN_VERSION ?= 0.1.0
+BIN_VERSION ?= 0.1.1
 BIN_NAME ?= awsudo
 BIN_PATH ?= $(TARGET_PATH)/$(BIN_NAME)
 NPM ?= `which npm`
