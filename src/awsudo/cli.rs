@@ -8,7 +8,7 @@ const AWS_DEFAULT_CACHE_DIR: &str = ".awsudo/";
 pub struct CLI {
     pub user: String,
     pub command: String,
-    pub config: String,
+    pub config: std::path::PathBuf,
     pub cache_dir: std::path::PathBuf,
 }
 
@@ -18,16 +18,11 @@ pub fn parse() -> CLI {
 
 fn from_args(matches: ArgMatches) -> CLI {
     let user = String::from(matches.value_of("user").unwrap_or("default"));
-    let config: String = match matches.value_of("config") {
-        Some(value) => String::from(value),
-        None => match dirs::home_dir() {
-            Some(path) => match path.join(AWS_DEFAULT_CONFIG_PATH).to_str() {
-                Some(s) => String::from(s),
-                None => panic!("Something wrong with your home dir"),
-            },
-            None => panic!("Something wrong with your home dir"),
-        },
-    };
+    let config = matches.value_of("config")
+        .map(|s| std::path::PathBuf::from(s))
+        .or(dirs::home_dir().map(|path| path.join(AWS_DEFAULT_CONFIG_PATH)))
+        .expect("Something wrong with config");
+
     let cache_dir = matches.value_of("cache_dir")
         .map(|s| std::path::PathBuf::from(s))
         .or(dirs::runtime_dir().map(|path| path.join(AWS_DEFAULT_CACHE_DIR)))
