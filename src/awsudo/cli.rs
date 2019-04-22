@@ -83,6 +83,7 @@ fn default<'b, 'c>() -> App<'b, 'c> {
 #[cfg(test)]
 mod tests {
     use awsudo::cli;
+    use std::path::PathBuf;
 
     #[test]
     fn it_parses_user() {
@@ -100,8 +101,6 @@ mod tests {
             dirs::home_dir()
                 .unwrap()
                 .join(".aws/config")
-                .to_str()
-                .unwrap()
         );
     }
 
@@ -111,7 +110,7 @@ mod tests {
 
         assert_eq!(
             result.cache_dir,
-            dirs::home_dir().unwrap().join(".awsudo/").to_str().unwrap()
+            dirs::runtime_dir().unwrap().join(".awsudo/")
         );
     }
 
@@ -125,7 +124,7 @@ mod tests {
             "/usr/specific/path",
         ]));
 
-        assert_eq!(result.config, "/usr/specific/path");
+        assert_eq!(result.config, PathBuf::from("/usr/specific/path"));
     }
 
     #[test]

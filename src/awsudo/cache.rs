@@ -97,22 +97,22 @@ mod tests {
     use std::fs;
     use std::path::{Path, PathBuf};
 
-    fn fixtures_tmp_path() -> String {
+    fn fixtures_tmp_path() -> PathBuf {
         let mut p = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
         p.push("test/fixtures/tmp/cache");
-        p.to_str().unwrap().to_string()
+        p
     }
 
-    fn fixtures_path() -> String {
+    fn fixtures_path() -> PathBuf {
         let mut p = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
         p.push("test/fixtures/cache");
-        p.to_str().unwrap().to_string()
+        p
     }
 
     #[test]
     fn it_returns_error_when_the_file_is_not_present() {
         assert_eq!(
-            Cache::new(fixtures_path(), "path".to_string()).fetch(),
+            Cache::new(fixtures_path(), "path").fetch(),
             Err("Cache file is not present or not valid")
         );
     }
@@ -120,7 +120,7 @@ mod tests {
     #[test]
     fn it_returns_error_when_the_file_is_not_ini_valid() {
         assert_eq!(
-            Cache::new(fixtures_path(), "invalid".to_string()).fetch(),
+            Cache::new(fixtures_path(), "invalid").fetch(),
             Err("Cache file is missing required values")
         );
     }
@@ -128,7 +128,7 @@ mod tests {
     #[test]
     fn it_returns_error_when_the_file_is_missing_values_valid() {
         assert_eq!(
-            Cache::new(fixtures_path(), "invalid_missing_values".to_string()).fetch(),
+            Cache::new(fixtures_path(), "invalid_missing_values").fetch(),
             Err("Cache file is missing required values")
         );
     }
@@ -136,7 +136,7 @@ mod tests {
     #[test]
     fn it_returns_error_when_the_file_date_is_not_valid() {
         assert_eq!(
-            Cache::new(fixtures_path(), "invalid_date".to_string()).fetch(),
+            Cache::new(fixtures_path(), "invalid_date").fetch(),
             Err("Cache file does not have a valid date")
         );
     }
@@ -144,7 +144,7 @@ mod tests {
     #[test]
     fn it_returns_error_when_the_file_date_is_expired() {
         assert_eq!(
-            Cache::new(fixtures_path(), "invalid_expired".to_string()).fetch(),
+            Cache::new(fixtures_path(), "invalid_expired").fetch(),
             Err("Cache file is expired")
         );
     }
@@ -152,7 +152,7 @@ mod tests {
     #[test]
     fn it_returns_the_credentails_when_the_valid() {
         assert_eq!(
-            Cache::new(fixtures_path(), "valid".to_string()).fetch(),
+            Cache::new(fixtures_path(), "valid").fetch(),
             Ok(Credentials {
                 access_key_id: "ASIA3NOTVALID2WN5".to_string(),
                 secret_access_key: "8s7k+21mKladUU9d".to_string(),
@@ -172,7 +172,7 @@ mod tests {
         };
 
         assert_eq!(
-            Cache::new(fixtures_tmp_path(), "it-doesnt-matter".to_string()).persist(cr),
+            Cache::new(fixtures_tmp_path(), "it-doesnt-matter").persist(cr),
             Ok(()),
         );
     }
@@ -187,7 +187,7 @@ mod tests {
         };
 
         assert_eq!(
-            Cache::new("/invalid".to_string(), "it-doesnt-matter".to_string()).persist(cr),
+            Cache::new(PathBuf::from("/invalid"), "it-doesnt-matter").persist(cr),
             Err("Failed to persist cache: dir cannot be created"),
         );
     }
@@ -202,7 +202,7 @@ mod tests {
         };
 
         assert_eq!(
-            Cache::new(fixtures_tmp_path(), "file".to_string()).persist(cr),
+            Cache::new(fixtures_tmp_path(), "file").persist(cr),
             Ok(()),
         );
 

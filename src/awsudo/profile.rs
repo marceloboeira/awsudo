@@ -49,11 +49,11 @@ mod tests {
     use awsudo::profile::Profile;
     use std::path::PathBuf;
 
-    fn fixtures_path(file: &str) -> String {
+    fn fixtures_path(file: &str) -> PathBuf {
         let mut p = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
         p.push("test/fixtures/config/");
         p.push(file);
-        p.to_str().unwrap().to_string()
+        p
     }
 
     #[test]
