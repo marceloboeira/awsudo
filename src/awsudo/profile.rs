@@ -1,7 +1,7 @@
 extern crate ini;
 
 use self::ini::Ini;
-use std::path::Path;
+use std::path::PathBuf;
 
 #[derive(Debug)]
 pub struct Profile {
@@ -19,9 +19,9 @@ impl PartialEq for Profile {
 }
 
 impl Profile {
-    pub fn load_from(file_path: String, user: String) -> Result<Profile, &'static str> {
+    pub fn load_from(file_path: PathBuf, user: String) -> Result<Profile, &'static str> {
         let profile = format!("profile {}", user);
-        match Ini::load_from_file(Path::new(&file_path)) {
+        match Ini::load_from_file(&file_path) {
             Err(_) => Err("Profile file not found"),
             Ok(ini) => match ini.section(Some(profile.to_owned())) {
                 Some(s) => match (s.get("role_arn"), s.get("mfa_serial"), s.get("region")) {
@@ -49,11 +49,11 @@ mod tests {
     use awsudo::profile::Profile;
     use std::path::PathBuf;
 
-    fn fixtures_path(file: &str) -> String {
+    fn fixtures_path(file: &str) -> PathBuf {
         let mut p = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
         p.push("test/fixtures/config/");
         p.push(file);
-        p.to_str().unwrap().to_string()
+        p
     }
 
     #[test]

@@ -8,8 +8,8 @@ const AWS_DEFAULT_CACHE_DIR: &str = ".awsudo/";
 pub struct CLI {
     pub user: String,
     pub command: String,
-    pub config: String,
-    pub cache_dir: String,
+    pub config: std::path::PathBuf,
+    pub cache_dir: std::path::PathBuf,
 }
 
 pub fn parse() -> CLI {
@@ -18,26 +18,17 @@ pub fn parse() -> CLI {
 
 fn from_args(matches: ArgMatches) -> CLI {
     let user = String::from(matches.value_of("user").unwrap_or("default"));
-    let config: String = match matches.value_of("config") {
-        Some(value) => String::from(value),
-        None => match dirs::home_dir() {
-            Some(path) => match path.join(AWS_DEFAULT_CONFIG_PATH).to_str() {
-                Some(s) => String::from(s),
-                None => panic!("Something wrong with your home dir"),
-            },
-            None => panic!("Something wrong with your home dir"),
-        },
-    };
-    let cache_dir: String = match matches.value_of("cache_dir") {
-        Some(value) => String::from(value),
-        None => match dirs::home_dir() {
-            Some(path) => match path.join(AWS_DEFAULT_CACHE_DIR).to_str() {
-                Some(s) => String::from(s),
-                None => panic!("Something wrong with your home dir"),
-            },
-            None => panic!("Something wrong with your home dir"),
-        },
-    };
+    let config = matches.value_of("config")
+        .map(|s| std::path::PathBuf::from(s))
+        .or(dirs::home_dir().map(|path| path.join(AWS_DEFAULT_CONFIG_PATH)))
+        .expect("Something wrong with config");
+
+    let cache_dir = matches.value_of("cache_dir")
+        .map(|s| std::path::PathBuf::from(s))
+        .or(dirs::runtime_dir().map(|path| path.join(AWS_DEFAULT_CACHE_DIR)))
+        .or(dirs::home_dir().map(|path| path.join(AWS_DEFAULT_CACHE_DIR)))
+        .expect("Something wrong with cache_dir");
+
     let command = match matches.subcommand() {
         (external, maybe_matches) => {
             let args = match maybe_matches {
@@ -92,6 +83,7 @@ fn default<'b, 'c>() -> App<'b, 'c> {
 #[cfg(test)]
 mod tests {
     use awsudo::cli;
+    use std::path::PathBuf;
 
     #[test]
     fn it_parses_user() {
@@ -109,8 +101,6 @@ mod tests {
             dirs::home_dir()
                 .unwrap()
                 .join(".aws/config")
-                .to_str()
-                .unwrap()
         );
     }
 
@@ -120,7 +110,7 @@ mod tests {
 
         assert_eq!(
             result.cache_dir,
-            dirs::home_dir().unwrap().join(".awsudo/").to_str().unwrap()
+            dirs::runtime_dir().unwrap().join(".awsudo/")
         );
     }
 
@@ -134,7 +124,7 @@ mod tests {
             "/usr/specific/path",
         ]));
 
-        assert_eq!(result.config, "/usr/specific/path");
+        assert_eq!(result.config, PathBuf::from("/usr/specific/path"));
     }
 
     #[test]
