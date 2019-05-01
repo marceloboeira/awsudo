@@ -93,25 +93,28 @@ mod tests {
     }
 
     #[test]
-    fn it_sets_default_config() {
+    fn it_sets_default_cache_dir() {
         let result = cli::from_args(cli::default().get_matches_from(vec!["awsudo", "-u", "jeff"]));
 
-        assert_eq!(
-            result.config,
-            dirs::home_dir()
-                .unwrap()
-                .join(".aws/config")
-        );
+        let dir = match dirs::runtime_dir() {
+            None => dirs::home_dir().unwrap().join(".awsudo/"),
+            Some(p) => p.join(".awsudo/"),
+        };
+
+        assert_eq!(result.cache_dir, dir);
     }
 
     #[test]
-    fn it_sets_default_cache_dir_config() {
-        let result = cli::from_args(cli::default().get_matches_from(vec!["awsudo", "-u", "jeff"]));
+    fn it_accepts_cache_dir_option() {
+        let result = cli::from_args(cli::default().get_matches_from(vec![
+            "awsudo",
+            "-u",
+            "jeff",
+            "--cache-dir",
+            "/foo/bar",
+        ]));
 
-        assert_eq!(
-            result.cache_dir,
-            dirs::runtime_dir().unwrap().join(".awsudo/")
-        );
+        assert_eq!(result.cache_dir, PathBuf::from("/foo/bar"));
     }
 
     #[test]
