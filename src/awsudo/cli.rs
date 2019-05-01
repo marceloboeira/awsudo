@@ -18,12 +18,14 @@ pub fn parse() -> CLI {
 
 fn from_args(matches: ArgMatches) -> CLI {
     let user = String::from(matches.value_of("user").unwrap_or("default"));
-    let config = matches.value_of("config")
+    let config = matches
+        .value_of("config")
         .map(|s| std::path::PathBuf::from(s))
         .or(dirs::home_dir().map(|path| path.join(AWS_DEFAULT_CONFIG_PATH)))
         .expect("Something wrong with config");
 
-    let cache_dir = matches.value_of("cache_dir")
+    let cache_dir = matches
+        .value_of("cache_dir")
         .map(|s| std::path::PathBuf::from(s))
         .or(dirs::runtime_dir().map(|path| path.join(AWS_DEFAULT_CACHE_DIR)))
         .or(dirs::home_dir().map(|path| path.join(AWS_DEFAULT_CACHE_DIR)))
