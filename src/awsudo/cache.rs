@@ -16,7 +16,10 @@ pub struct Cache {
 
 impl Cache {
     pub fn new(dir: PathBuf, filename: &str) -> Cache {
-        Cache { dir, file: filename.to_owned() }
+        Cache {
+            dir,
+            file: filename.to_owned(),
+        }
     }
 }
 
@@ -201,10 +204,7 @@ mod tests {
             cached: false,
         };
 
-        assert_eq!(
-            Cache::new(fixtures_tmp_path(), "file").persist(cr),
-            Ok(()),
-        );
+        assert_eq!(Cache::new(fixtures_tmp_path(), "file").persist(cr), Ok(()),);
 
         assert_eq!(Path::new(&fixtures_tmp_path()).join("file").exists(), true);
 
