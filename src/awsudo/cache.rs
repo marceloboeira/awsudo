@@ -190,7 +190,7 @@ mod tests {
         };
 
         assert_eq!(
-            Cache::new(PathBuf::from("/invalid"), "it-doesnt-matter").persist(cr),
+            Cache::new(PathBuf::from("\0"), "it-doesnt-matter").persist(cr),
             Err("Failed to persist cache: dir cannot be created"),
         );
     }
