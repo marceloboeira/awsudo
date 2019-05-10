@@ -7,6 +7,8 @@ NPM ?= `which npm`
 MERMAID ?= `which mmdc`
 DOCS_PATH ?= `pwd`/docs
 RELEASE_FILE ?= $(BIN_NAME)-$(BIN_VERSION).x86_64-apple-darwin.tar.gz
+FUNZZY_BIN ?= `which funzzy`
+COMPOSE ?= `which docker-compose`
 
 .PHONY: build
 build: format
@@ -44,3 +46,11 @@ docs:
 release: build_release
 	@cd $(TARGET_PATH) && tar -zcvf ../../$(RELEASE_FILE) $(BIN_NAME)
 	@shasum -a 256 $(RELEASE_FILE)
+
+.PHONY: test_watcher
+test_watcher:
+	@$(FUNZZY_BIN)
+
+.PHONY: docker_test_watcher
+docker_test_watcher:
+	@$(COMPOSE) up

@@ -21,8 +21,10 @@ Want to contribute with code?
 * `make build` - Build the `/target/debug/awsudo`.
 * `make build_release` - Build the optmized `/target/release/awsudo`.
 * `make release` - Build and generate the release file for the given version.
-* `make install` - Use cargo insttall.
+* `make install` - Use cargo install.
 * `make test` - Run the tests.
+* `make test_watcher` - Run the tests under a watcher.
+* `make docker_test_watcher` - Run the tests under a watcher on Docker (to ensure linux compatibility).
 * `make format` - Format the code following rust standards.
 * `make setup_docs` - One time setup of dependencies for docs.
 * `make docs` - Generate documentation diagrams.
